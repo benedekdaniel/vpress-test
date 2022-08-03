@@ -1,0 +1,15 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+.post-container {
+	@apply flex justify-center max-w-full my-5;
+}
+
+.page-title {
+	@apply flex justify-center my-10 text-4xl;
+}
+
+.btn-group {
+	@apply flex justify-center;
+}
