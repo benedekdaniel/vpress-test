@@ -1,6 +1,6 @@
 import type { AppDispatch } from "../src/app/store";
 import { Post } from "components/Post";
-import { PostType } from "features/posts/post.type";
+import { PostStatus, PostType } from "features/posts/post.type";
 import { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import {
@@ -16,11 +16,11 @@ const App = () => {
 
 	const dispatch = useDispatch<AppDispatch>();
 
-	const posts = useSelector(selectAllPosts);
-	const postStatus = useSelector(getPostsStatus);
+	const posts: Array<PostType> = useSelector(selectAllPosts);
+	const postStatus: PostStatus = useSelector(getPostsStatus);
 
 	useEffect(() => {
-		if (postStatus === "idle") {
+		if (postStatus === PostStatus.idle) {
 			dispatch(fetchPosts());
 		}
 	}, [postStatus, dispatch]);
@@ -35,7 +35,7 @@ const App = () => {
 
 	return (
 		<section>
-			{postStatus === "loading" ? (
+			{postStatus === PostStatus.loading ? (
 				<h4>Loading...</h4>
 			) : (
 				<>

@@ -1,13 +1,19 @@
 import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
 import axios from "axios";
-import { PostType } from "features/posts/post.type";
+import { PostStatus, PostType } from "features/posts/post.type";
 
+// These values could be passed into an ENV file (process.env)
 const DUMMY_API_URL = "https://dummyapi.io/data/v1/post?limit=10";
 const DUMMY_API_KEY = "628cfd76d7c13ab387fde193";
 
-const initialState = {
+interface ReduxState {
+	posts: Array<PostType>;
+	status: PostStatus;
+}
+
+const initialState: ReduxState = {
 	posts: [],
-	status: "idle" //'idle' | 'loading' | 'succeeded'
+	status: PostStatus.idle
 };
 
 export const fetchPosts = createAsyncThunk("posts/fetchPosts", async () => {
@@ -26,18 +32,17 @@ const postsSlice = createSlice({
 	extraReducers(builder) {
 		builder
 			.addCase(fetchPosts.pending, (state, action) => {
-				state.status = "loading";
+				state.status = PostStatus.loading;
 			})
 			.addCase(fetchPosts.fulfilled, (state, action) => {
-				state.status = "succeeded";
-				const loadedPosts = action.payload.data.map(
-					(post: PostType) => {
-						return post;
-					}
-				);
+				state.status = PostStatus.succeeded;
+				const loadedPosts = action.payload.data;
 
-				// Add fetched posts to the array
-				state.posts = state.posts.concat(loadedPosts);
+				loadedPosts.forEach((loaded: PostType) => {
+					if (!state.posts.some(p => p.id === loaded.id)) {
+						state.posts.push(loaded);
+					}
+				});
 			});
 	}
 });

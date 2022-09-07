@@ -6,3 +6,9 @@ export type PostType = {
 	tags: string[];
 	text: string;
 };
+
+export enum PostStatus {
+	idle = "idle",
+	loading = "loading",
+	succeeded = "succeded"
+}
