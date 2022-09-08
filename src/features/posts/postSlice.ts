@@ -1,4 +1,5 @@
 import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
+import { RootState } from "app/store";
 import axios from "axios";
 import { PostStatus, PostType } from "features/posts/post.type";
 
@@ -6,12 +7,12 @@ import { PostStatus, PostType } from "features/posts/post.type";
 const DUMMY_API_URL = "https://dummyapi.io/data/v1/post?limit=10";
 const DUMMY_API_KEY = "628cfd76d7c13ab387fde193";
 
-interface ReduxState {
+interface PostsState {
 	posts: Array<PostType>;
 	status: PostStatus;
 }
 
-const initialState: ReduxState = {
+const initialState: PostsState = {
 	posts: [],
 	status: PostStatus.idle
 };
@@ -47,7 +48,9 @@ const postsSlice = createSlice({
 	}
 });
 
-export const selectAllPosts = (state: any) => state.posts.posts;
-export const getPostsStatus = (state: any) => state.posts.status;
+export const selectAllPosts = (state: RootState) => state.posts.posts;
+export const getPostsStatus = (state: RootState) => state.posts.status;
+export const filterByAnimals = (state: RootState) =>
+	state.posts.posts.filter(p => p.tags.includes("animal"));
 
 export default postsSlice.reducer;

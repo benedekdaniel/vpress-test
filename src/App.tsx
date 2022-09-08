@@ -16,8 +16,8 @@ const App = () => {
 
 	const dispatch = useDispatch<AppDispatch>();
 
-	const posts: Array<PostType> = useSelector(selectAllPosts);
-	const postStatus: PostStatus = useSelector(getPostsStatus);
+	const posts = useSelector(selectAllPosts);
+	const postStatus = useSelector(getPostsStatus);
 
 	useEffect(() => {
 		if (postStatus === PostStatus.idle) {
