@@ -1,6 +1,5 @@
 import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
 import { RootState } from "app/store";
-import axios from "axios";
 import { PostStatus, PostType } from "features/posts/post.type";
 
 // These values could be passed into an ENV file (process.env)
@@ -24,12 +23,12 @@ const initialState: PostsState = {
 };
 
 export const fetchPosts = createAsyncThunk("posts/fetchPosts", async () => {
-	const response = await axios.get(DUMMY_API_URL, {
+	const response = await fetch(DUMMY_API_URL, {
 		headers: {
 			"app-id": DUMMY_API_KEY
 		}
 	});
-	return response.data;
+	return response.json();
 });
 
 const postsSlice = createSlice({
