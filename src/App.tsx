@@ -1,26 +1,27 @@
 import type { AppDispatch } from "../src/app/store";
 import { Post } from "components/Post";
 import { PostStatus } from "features/posts/post.type";
-import { useEffect, useState } from "react";
+import { useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import {
-	selectAllPosts,
 	getPostsStatus,
 	fetchPosts,
-	getFilterValue
+	getPostsPerPage,
+	getPage,
+	setPage,
+	getVisiblePostsInfo
 } from "./features/posts/postSlice";
 import Header from "components/Header";
 import Pagination from "components/Pagination";
 
 const App = () => {
-	const [page, setPage] = useState(1);
-	const [postsPerPage] = useState(2);
-
 	const dispatch = useDispatch<AppDispatch>();
 
-	const posts = useSelector(selectAllPosts);
+	const page = useSelector(getPage);
+	const postsPerPage = useSelector(getPostsPerPage);
 	const postStatus = useSelector(getPostsStatus);
-	const filterValue = useSelector(getFilterValue);
+	const { visiblePosts, visiblePostsLength } =
+		useSelector(getVisiblePostsInfo);
 
 	useEffect(() => {
 		if (postStatus === PostStatus.idle) {
@@ -28,17 +29,8 @@ const App = () => {
 		}
 	}, [postStatus, dispatch]);
 
-	const postsToShow = !filterValue
-		? posts
-		: posts.filter(post => post.tags.includes(filterValue));
-
-	const lastPostIndex = page * postsPerPage;
-	const firstPostIndex = lastPostIndex - postsPerPage;
-
-	const currentPosts = postsToShow.slice(firstPostIndex, lastPostIndex);
-
 	const paginate = (pageNumber: number) => {
-		setPage(pageNumber);
+		dispatch(setPage(pageNumber));
 	};
 
 	return (
@@ -48,7 +40,7 @@ const App = () => {
 			) : (
 				<>
 					<Header />
-					{currentPosts.map(post => {
+					{visiblePosts.map(post => {
 						return (
 							<div key={post.id} className="post-container">
 								<Post
@@ -65,7 +57,7 @@ const App = () => {
 					<Pagination
 						page={page}
 						postsPerPage={postsPerPage}
-						totalPosts={postsToShow.length}
+						totalPosts={visiblePostsLength}
 						paginate={paginate}
 					/>
 				</>

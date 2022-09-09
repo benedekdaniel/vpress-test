@@ -11,12 +11,16 @@ interface PostsState {
 	posts: Array<PostType>;
 	filterValue: string;
 	status: PostStatus;
+	page: number;
+	postsPerPage: number;
 }
 
 const initialState: PostsState = {
 	posts: [],
 	filterValue: "",
-	status: PostStatus.idle
+	status: PostStatus.idle,
+	page: 1,
+	postsPerPage: 2
 };
 
 export const fetchPosts = createAsyncThunk("posts/fetchPosts", async () => {
@@ -34,6 +38,9 @@ const postsSlice = createSlice({
 	reducers: {
 		setFilterValue: (state, action) => {
 			state.filterValue = action.payload;
+		},
+		setPage: (state, action) => {
+			state.page = action.payload;
 		}
 	},
 	extraReducers(builder) {
@@ -54,9 +61,25 @@ const postsSlice = createSlice({
 	}
 });
 
-export const { setFilterValue } = postsSlice.actions;
-export const selectAllPosts = (state: RootState) => state.posts.posts;
+export const { setFilterValue, setPage } = postsSlice.actions;
 export const getPostsStatus = (state: RootState) => state.posts.status;
 export const getFilterValue = (state: RootState) => state.posts.filterValue;
+export const getPostsPerPage = (state: RootState) => state.posts.postsPerPage;
+export const getPage = (state: RootState) => state.posts.page;
+export const getVisiblePostsInfo = (state: RootState) => {
+	const { posts, filterValue, page, postsPerPage } = state.posts;
+
+	const postsToShow = !filterValue
+		? posts
+		: posts.filter(post => post.tags.includes(filterValue));
+
+	const lastPostIndex = page * postsPerPage;
+	const firstPostIndex = lastPostIndex - postsPerPage;
+
+	return {
+		visiblePosts: postsToShow.slice(firstPostIndex, lastPostIndex),
+		visiblePostsLength: postsToShow.length
+	};
+};
 
 export default postsSlice.reducer;
