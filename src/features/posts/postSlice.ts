@@ -9,11 +9,13 @@ const DUMMY_API_KEY = "628cfd76d7c13ab387fde193";
 
 interface PostsState {
 	posts: Array<PostType>;
+	filterValue: string;
 	status: PostStatus;
 }
 
 const initialState: PostsState = {
 	posts: [],
+	filterValue: "",
 	status: PostStatus.idle
 };
 
@@ -29,7 +31,11 @@ export const fetchPosts = createAsyncThunk("posts/fetchPosts", async () => {
 const postsSlice = createSlice({
 	name: "posts",
 	initialState,
-	reducers: {},
+	reducers: {
+		setFilterValue: (state, action) => {
+			state.filterValue = action.payload;
+		}
+	},
 	extraReducers(builder) {
 		builder
 			.addCase(fetchPosts.pending, (state, action) => {
@@ -48,9 +54,9 @@ const postsSlice = createSlice({
 	}
 });
 
+export const { setFilterValue } = postsSlice.actions;
 export const selectAllPosts = (state: RootState) => state.posts.posts;
 export const getPostsStatus = (state: RootState) => state.posts.status;
-export const filterByAnimals = (state: RootState) =>
-	state.posts.posts.filter(p => p.tags.includes("animal"));
+export const getFilterValue = (state: RootState) => state.posts.filterValue;
 
 export default postsSlice.reducer;

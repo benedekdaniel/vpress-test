@@ -1,13 +1,15 @@
 import type { AppDispatch } from "../src/app/store";
 import { Post } from "components/Post";
-import { PostStatus, PostType } from "features/posts/post.type";
+import { PostStatus } from "features/posts/post.type";
 import { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import {
 	selectAllPosts,
 	getPostsStatus,
-	fetchPosts
+	fetchPosts,
+	getFilterValue
 } from "./features/posts/postSlice";
+import Header from "components/Header";
 import Pagination from "components/Pagination";
 
 const App = () => {
@@ -18,6 +20,7 @@ const App = () => {
 
 	const posts = useSelector(selectAllPosts);
 	const postStatus = useSelector(getPostsStatus);
+	const filterValue = useSelector(getFilterValue);
 
 	useEffect(() => {
 		if (postStatus === PostStatus.idle) {
@@ -25,22 +28,27 @@ const App = () => {
 		}
 	}, [postStatus, dispatch]);
 
+	const postsToShow = !filterValue
+		? posts
+		: posts.filter(post => post.tags.includes(filterValue));
+
 	const lastPostIndex = page * postsPerPage;
 	const firstPostIndex = lastPostIndex - postsPerPage;
-	const currentPosts = posts.slice(firstPostIndex, lastPostIndex);
+
+	const currentPosts = postsToShow.slice(firstPostIndex, lastPostIndex);
 
 	const paginate = (pageNumber: number) => {
 		setPage(pageNumber);
 	};
 
 	return (
-		<section>
+		<section className="page-wrapper">
 			{postStatus === PostStatus.loading ? (
 				<h4>Loading...</h4>
 			) : (
 				<>
-					<h1 className="page-title">Today's news</h1>
-					{currentPosts.map((post: PostType) => {
+					<Header />
+					{currentPosts.map(post => {
 						return (
 							<div key={post.id} className="post-container">
 								<Post
@@ -57,7 +65,7 @@ const App = () => {
 					<Pagination
 						page={page}
 						postsPerPage={postsPerPage}
-						totalPosts={posts.length}
+						totalPosts={postsToShow.length}
 						paginate={paginate}
 					/>
 				</>
