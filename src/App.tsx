@@ -24,10 +24,8 @@ const App = () => {
 		useSelector(getVisiblePostsInfo);
 
 	useEffect(() => {
-		if (postStatus === PostStatus.idle) {
-			dispatch(fetchPosts());
-		}
-	}, [postStatus, dispatch]);
+		dispatch(fetchPosts());
+	}, [dispatch]);
 
 	const paginate = (pageNumber: number) => {
 		dispatch(setPage(pageNumber));
