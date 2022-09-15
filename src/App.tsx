@@ -38,20 +38,18 @@ const App = () => {
 			) : (
 				<>
 					<Header />
-					{visiblePosts.map(post => {
-						return (
-							<div key={post.id} className="post-container">
-								<Post
-									id={post.id}
-									image={post.image}
-									likes={post.likes}
-									publishDate={post.publishDate}
-									tags={post.tags}
-									text={post.text}
-								/>
-							</div>
-						);
-					})}
+					{visiblePosts.map(post => (
+						<div key={post.id} className="post-container">
+							<Post
+								id={post.id}
+								image={post.image}
+								likes={post.likes}
+								publishDate={post.publishDate}
+								tags={post.tags}
+								text={post.text}
+							/>
+						</div>
+					))}
 					<Pagination
 						page={page}
 						postsPerPage={postsPerPage}
